@@ -29,6 +29,9 @@ import com.tracker.entity.Employee;
 import com.tracker.exception.InfyTrackerException;
 import com.tracker.service.ManagerService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 @RequestMapping(value = "manager/")
 @Validated
@@ -59,6 +62,8 @@ public class ManagerAPI {
 
 	// add user
 //     localhost:8765/manager/addUser/
+	@Operation
+    @ApiResponses
 	@PostMapping(value = "addUser/")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -71,6 +76,8 @@ public class ManagerAPI {
 
 	// addtask
 //    localhost:8765/manager/addtask/1171564
+	@Operation
+    @ApiResponses
 	@PostMapping(value = "addtask/{empId}")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -82,7 +89,8 @@ public class ManagerAPI {
 		return new ResponseEntity<>(msg, HttpStatus.CREATED);
 
 	}
-
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/changeRole")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -93,7 +101,8 @@ public class ManagerAPI {
 		return new ResponseEntity<String>(msg, HttpStatus.OK);
 
 	}
-
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/removeTask/")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -104,7 +113,8 @@ public class ManagerAPI {
 
 		return new ResponseEntity<>(environment.getProperty(msg), HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/reassignTask/{newEmpId}/")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -118,6 +128,8 @@ public class ManagerAPI {
 	}
 
 //    localhost:8765/manager/deactivateEmployee
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/deactivateEmployee")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -138,7 +150,8 @@ public class ManagerAPI {
 
 		return new ResponseEntity<List<EmployeeDTO>>(employes, HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getAllTeamMemberTaskByStatus")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -148,7 +161,8 @@ public class ManagerAPI {
 
 		return new ResponseEntity<List<EmployeeDTO>>(employes, HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getAllTeamMemberTaskByStatus/{employeeId}")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -160,7 +174,8 @@ public class ManagerAPI {
 
 		return new ResponseEntity<List<EmployeeDTO>>(employes, HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getAlluserDetails")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -170,7 +185,8 @@ public class ManagerAPI {
 
 		return new ResponseEntity<List<EmployeeDTO>>(employes, HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getUserDetail/{empId}") //
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")
@@ -182,7 +198,8 @@ public class ManagerAPI {
 		return new ResponseEntity<EmployeeDTO>(employes, HttpStatus.OK);
 	}
 //    @Secured("Manager")
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getUserActivityDetails/{activityId}")
 	@PreAuthorize("hasAuthority('Manager')")
 	@Secured("Manager")

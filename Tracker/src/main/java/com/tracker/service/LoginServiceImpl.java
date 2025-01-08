@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tracker.dao.LoginRepository;
 import com.tracker.dto.EmployeeDTO;
+import com.tracker.dto.LoginDTO;
 import com.tracker.entity.Employee;
 import com.tracker.jwtvalidation.JwtService;
 @Service
@@ -25,16 +26,16 @@ public class LoginServiceImpl implements LoginService{
 		@Autowired
 		LoginRepository loginRepository;
 	@Override
-	public String login(EmployeeDTO employeeDetails) throws Exception {
+	public String login(LoginDTO employeeDetails) throws Exception {
 										// asking the authmanager to validate the username and password we are not goin to use equals
 //		   authenication manager then he will as authenicationprovider  aasked USerDetail Service to get the actual data and check both value by DAOAuthenication manager using bcrypt
 		
 		 
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(employeeDetails.getUsername(), employeeDetails.getPassword()));
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(employeeDetails.getUserName(), employeeDetails.getPassword()));
 		String token ="";
 		if(authentication.isAuthenticated()) {
 			// valid  so genrate token
-			Optional<Employee>  optional= loginRepository.findByUsername(employeeDetails.getUsername());
+			Optional<Employee>  optional= loginRepository.findByUsername(employeeDetails.getUserName());
 		Employee emp =	optional.orElseThrow(()-> new AccessDeniedException("Access_Denied"));
 		
 			token =jwtService.generateToken(new EmployeeDTO(emp));

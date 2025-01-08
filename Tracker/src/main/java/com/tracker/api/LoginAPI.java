@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tracker.dto.EmployeeDTO;
+import com.tracker.dto.LoginDTO;
 import com.tracker.service.LoginService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 
@@ -29,9 +33,11 @@ public class LoginAPI {
 	Environment envirnment;
 
 //localhost:8765/login
+	@Operation
+    @ApiResponses
 	@PostMapping(value = "/login")
 	@PermitAll
-	public ResponseEntity<String> authenticateCustomer(@RequestBody EmployeeDTO employeeDetails)
+	public ResponseEntity<String> authenticateCustomer(@RequestBody LoginDTO employeeDetails)
 			throws Exception {
 
 		System.out.println("inside the API login calling - > service login");
@@ -39,7 +45,8 @@ public class LoginAPI {
 		return new ResponseEntity<String>(s, HttpStatus.OK);
 
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/")
 	public String welcome() {
 		return "welcome these login successfull";

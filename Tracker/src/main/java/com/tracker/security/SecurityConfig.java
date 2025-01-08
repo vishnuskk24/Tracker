@@ -1,8 +1,5 @@
 package com.tracker.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,25 +8,31 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.tracker.jwtvalidation.JwtFilter;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import io.swagger.models.Info;
+//import io.swagger.v3.oas.models.OpenAPI;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 	
 	@Autowired
@@ -59,15 +62,17 @@ public class SecurityConfig {
 //		instead of doing above stuffes we can use lanbda function that mentioned in line 37
 								
 		return httpSecurity
-				.csrf(customizer-> customizer.disable()) //  disabling csrf
-				.authorizeHttpRequests(request -> request
-													.requestMatchers("/login","register").permitAll()
-													.anyRequest().authenticated()) // we are mentioning all the request to be authenicated
-				.formLogin().disable() // enabling the default login form  for web page  ||  disaling the form login becoz we are making it to stateless server is not managin any session so everytime we will get new session id  but http basic will prvide the small prompt for cedentials 
-				.httpBasic(Customizer.withDefaults())// for postman we are configuring /enabling login operation  
-				.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// so every time we have to pass the credetials  so the is not state is manages in server side if we use form login then every tme we have to give credentials in webpage but in postman in authorization we can give only once
-				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) //  before username and password filter we are adding jwt filter to validate jwt token if not it will check for username and password
-				.build();  // if we have only build in that cas we are not customizing   before build we have to do out required configuration
+                .csrf(customizer -> customizer.disable()) //  disabling csrf
+                .authorizeHttpRequests(request -> request
+                		.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/webjars/**","/login").permitAll()
+
+                        .anyRequest().authenticated()) // we are mentioning all the request to be authenicated
+//				.formLogin().disable() // enabling the default login form  for web page  ||  disaling the form login becoz we are making it to stateless server is not managin any session so everytime we will get new session id  but http basic will prvide the small prompt for cedentials 
+//				.httpBasic(Customizer.withDefaults())// for postman we are configuring /enabling login operation  
+                .httpBasic(basic -> basic.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// so every time we have to pass the credetials  so the is not state is manages in server side if we use form login then every tme we have to give credentials in webpage but in postman in authorization we can give only once
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) //  before username and password filter we are adding jwt filter to validate jwt token if not it will check for username and password
+                .build();  // if we have only build in that cas we are not customizing   before build we have to do out required configuration
 		
 		
 		
@@ -116,6 +121,20 @@ public class SecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();
 		
 		
+	}
+	
+	@Bean
+	public OpenAPI customOpenAPI() {
+	    return new OpenAPI()
+	            .info(new Info().title("Online Learning Platform API").version("1.0.0"))
+	            .components(new Components()
+	                    .addSecuritySchemes("bearerAuth", new SecurityScheme()
+	                            .name("Authorization")
+	                            .type(SecurityScheme.Type.HTTP)
+	                            .scheme("bearer")
+	                            .bearerFormat("JWT"))
+	            )
+	            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
 	}
 }
 

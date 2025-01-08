@@ -67,12 +67,30 @@ public class CustomUserDetails implements UserDetails {
 		this.role = user.getRole();
 
 		List<GrantedAuthority> auth = new ArrayList<>();
-		auth.add(new SimpleGrantedAuthority(role.toString()));
+		auth.add(new SimpleGrantedAuthority(user.getRole().toString()));
 		this.authorites = auth;
 
 		System.out.println("in MyUSerDetails  ->  line 47");
 		System.out.println(this.toString());
 
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 	

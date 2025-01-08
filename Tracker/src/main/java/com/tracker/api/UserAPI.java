@@ -27,6 +27,9 @@ import com.tracker.jwtvalidation.JwtService;
 import com.tracker.service.EmployeeService;
 import com.tracker.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 @RequestMapping(value = "user/")
 @Validated
@@ -46,7 +49,8 @@ public class UserAPI {
 //    localhost:8765/user/get    MyProfile/
 	@Autowired
 	JwtService util;
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getMyProfile/") // userid need to come in json object
 	public ResponseEntity<EmployeeDTO> getEmployee(@RequestHeader("Authorization") String jwt,
 			@RequestBody EmployeeDTO employee) throws NumberFormatException, Exception {
@@ -56,15 +60,16 @@ public class UserAPI {
 		System.out.println(jwt + " jwt token in get profile +++++++++++++++++");
 //        int empId =Integer.parseInt(util.getValuesFromJwt(jwt,"id"));
 //        System.out.println(util.getMapFromJwt(jwt.substring(7), "id"));
-//		EmployeeDTO e1 = util.getEmployeeDetailFromJWT(jwt.substring(7));
-		EmployeeDTO e1 = null ;// util.getEmployeeDetailFromJWT(jwt); ********
+		EmployeeDTO e1 = util.getEmployeeDetailFromJWT(jwt.substring(7));
+//		EmployeeDTO e1 = null ;// util.getEmployeeDetailFromJWT(jwt); ********
 //        EmployeeDTO ee =  userService.getMyDetail(Integer.parseInt(util.getValuesFromJwt(actualJWT,"id"))) ;
 		EmployeeDTO ee = userService.getMyDetail(e1.getEmployeeId());
 		ResponseEntity<EmployeeDTO> e = new ResponseEntity<EmployeeDTO>(ee, HttpStatus.OK);
 		return e;
 
 	}
-
+	@Operation
+    @ApiResponses
 	@GetMapping(value = "/getMyTaskByStatus/{status}") // userid need to come in json object need to check OR gate
 	public ResponseEntity<EmployeeDTO> getMyTaskByStatus(@RequestHeader("Authorization") String jwt,
 			@PathVariable ActivityStatus status) throws Exception {
@@ -86,12 +91,15 @@ public class UserAPI {
 //        
 //    }
 //    need to check
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/updateMyTaskDetail")
 	public ResponseEntity<String> updateMyTaskDetail(@RequestBody ActivityDTO activityDTO) throws Exception {
 		String msg = userService.updateMyTaskDetail(activityDTO);
 		return new ResponseEntity<String>(msg, HttpStatus.OK);
 	}
-
+	@Operation
+    @ApiResponses
 	@PutMapping(value = "/changePassword")
 	public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String jwt,
 			@Valid @RequestBody ChangePasswordDTO passwordDetails) throws Exception {

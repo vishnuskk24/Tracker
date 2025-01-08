@@ -27,6 +27,9 @@ import com.tracker.jwtvalidation.JwtService;
 import com.tracker.service.ActivityService;
 import com.tracker.service.EmployeeService;
 import com.tracker.service.LeadService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 //import com.eng.utility.UtilityMethods;
 @RestController
 @RequestMapping(value="lead/")
@@ -55,7 +58,8 @@ public class LeadAPI {
     private EmployeeService employeeService; 
     @Autowired
     private LeadService leadService; 
-    
+    @Operation
+    @ApiResponses
     @PostMapping(value="addtask/{empId}")
     public ResponseEntity<String> addTask(@RequestHeader("Authorization") String jwt, @PathVariable Integer empId,@Valid @RequestBody ActivityDTO activity) throws Exception{
         String actualJWT = jwt.substring(7);
@@ -71,6 +75,8 @@ public class LeadAPI {
         return new ResponseEntity<>(msg,HttpStatus.CREATED);
         
     }
+    @Operation
+    @ApiResponses
     @PutMapping(value="removeTask/")
     public ResponseEntity<String>  removeTask(@RequestHeader("Authorization") String jwt,@RequestBody EmployeeDTO employee) throws InfyTrackerException{
         
@@ -82,6 +88,8 @@ public class LeadAPI {
         return new ResponseEntity<>(environment.getProperty(msg),HttpStatus.OK);
     }
     
+    @Operation
+    @ApiResponses
     @PutMapping(value = "reassignTask/")
     public ResponseEntity<String> reassignTask(@RequestBody EmployeeDTO employeeDTO) throws InfyTrackerException{
         
@@ -90,7 +98,8 @@ public class LeadAPI {
         
         return new ResponseEntity<>(environment.getProperty(msg),HttpStatus.OK);
     }
-    
+    @Operation
+    @ApiResponses
     @GetMapping(value = "userTaskAccordingToUserIdAndStatus/{activityStatus}")
     public ResponseEntity<List<EmployeeDTO>> userTaskAccordingToUserIdAndStatus(@RequestBody EmployeeDTO employee, @PathVariable ActivityStatus activityStatus) throws InfyTrackerException{
         
@@ -98,6 +107,8 @@ public class LeadAPI {
         return new ResponseEntity<List<EmployeeDTO>>(activities,HttpStatus.OK);
         
     }
+    @Operation
+    @ApiResponses
     @GetMapping(value="/getEmployee/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable @Min( value =1,message = "The Given employee Id  must be greater then 0")  Integer employeeId) throws InfyTrackerException {
         
@@ -106,6 +117,8 @@ public class LeadAPI {
         return e;
         
     }
+    @Operation
+    @ApiResponses
     @GetMapping(value="/getAllEmployee/")
     public ResponseEntity<List<EmployeeDTO>> getEmployee() throws InfyTrackerException {
         

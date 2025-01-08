@@ -21,46 +21,47 @@ import com.tracker.entity.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
+//import io.jsonwebtoken.io.Decoders;
+//import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
 
-	static KeyGenerator keyGen ;
-	 static SecretKey secretKey;//=keyGen.generateKey();
-	 static String key;
+//	static KeyGenerator keyGen ;
+//	 static SecretKey secretKey;//=keyGen.generateKey();
+//	 static String key;
 	
-	 static {
-		 try {
-			keyGen =KeyGenerator.getInstance("HmacSHA256");
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 secretKey=keyGen.generateKey();
-		 key =Base64.getEncoder().encodeToString(secretKey.getEncoded()); ;//= "Ackjvkbfjdks456789dfghvjbnftghb";
-	 }
-	JwtService() throws Exception {
+//	 static {
+//		 try {
+//			keyGen =KeyGenerator.getInstance("HmacSHA256");
+//		} catch (NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		 secretKey=keyGen.generateKey();
+//		 key =Base64.getEncoder().encodeToString(secretKey.getEncoded()); ;//= "Ackjvkbfjdks456789dfghvjbnftghb";
+//	 }
+//	JwtService() throws Exception {
 		
-	}
+//	}
 
 	@Autowired
 	Environment environment;
 	
-
-		public static String genKey() throws Exception {
-//			String key="";
-			
-
-				
-//				SecretKey secretKey = keyGen.generateKey();
-//				String key = 
 //
-//				return key;
-			return key;
-			
-		}
+//		public static String genKey() throws Exception {
+////			String key="";
+//			
+//
+//				
+////				SecretKey secretKey = keyGen.generateKey();
+////				String key = 
+////
+////				return key;
+//			return key;
+//			
+//		}
 	public String generateToken(EmployeeDTO Employee) throws Exception {
 
 		// inside the token body we will hav the issue data expiry date subject all the
@@ -71,10 +72,10 @@ public class JwtService {
 		// return for i week
 		System.out.println("generating key -> ");
 //		if(key=="")key=genKey();
-		String token = Jwts.builder().claims(body).subject(Employee.getUsername())
-				.issuedAt(new Date(System.currentTimeMillis()))
+		String token = Jwts.builder().setClaims(body).setSubject(Employee.getUsername())
+				.setIssuedAt(new Date(System.currentTimeMillis()))
 
-				.expiration(new Date(System.currentTimeMillis() + dueTime)).signWith(secretKey).compact();
+				.setExpiration(new Date(System.currentTimeMillis() + dueTime)).signWith( SignatureAlgorithm.HS256,environment.getProperty("Secret_Key")).compact();
 //				.expiration(new Date(System.currentTimeMillis() + dueTime)).signWith(getKey()).compact();
 
 		return token;
@@ -116,17 +117,17 @@ public class JwtService {
 	    }
 
 	private Claims extractAllClaims(String token) {
-		System.out.println("key --> " + key);
+		System.out.println("token --> " + token);
 		
-		return Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token.trim().replace(" ",""))
-				.getPayload();
+		return Jwts.parser().setSigningKey(environment.getProperty("Secret_Key")).parseClaimsJws(token).getBody();
+//				.verifyWith(secretKey)
+//				.build()
+//				.parseSignedClaims(token)
+//				.getPayload();
 	}
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		final String username = extractUserName(token.replace(" ", ""));
+		final String username = extractUserName(token);
 		System.out.println();
 		return username.equals(userDetails.getUsername())&& !isTokenExpired(token);
 		

@@ -39,10 +39,14 @@ public class JwtFilter extends OncePerRequestFilter{
 				token= authHeader.substring(7);// bearer is not required
 				username=jwtService.extractUserName(token);
 			}                 // checking wheather it is already autheniticated
-			if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
+			System.out.println("JWT toke -> JWT filter "+ token);
+			System.out.println("  By ---------> "+  username);
+			if(username!=null && SecurityContextHolder. getContext().getAuthentication()==null) {
+				
 				
 				UserDetails userDetails = customUserDetailService.loadUserByUsername(username); // getting actual user data
 //				passing both user data  and token to validate
+				System.out.println(userDetails.getAuthorities().toString() +"<< ---- authorities");
 				if(jwtService.validateToken(token, userDetails)) {
 					UsernamePasswordAuthenticationToken authtoken =  new 	UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
 							
